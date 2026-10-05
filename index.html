@@ -85,9 +85,7 @@
               <input
                 id="newMerit"
                 type="number"
-                placeholder="Merit (0-100)"
-                min="0"
-                max="100"
+                placeholder="Merit"
                 value="0"
                 class="rounded-lg border border-slate-600 bg-slate-900 px-3 py-2 text-sm text-white placeholder:text-slate-400 focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/40"
               />
@@ -257,8 +255,6 @@
                   <input
                     id="merit-${member.id}"
                     type="number"
-                    min="0"
-                    max="100"
                     value="${member.merit}"
                     data-member-id="${member.id}"
                     class="merit-input rounded-lg border border-slate-600 bg-slate-900 px-3 py-2 text-sm font-semibold text-slate-100 w-20 focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/40"
@@ -297,7 +293,7 @@
           rank,
           rankOrder: Math.max(1, Math.min(5, rankOrder)),
           status,
-          merit: Math.max(0, Math.min(100, merit))
+          merit
         });
 
         saveMembersCloud();
@@ -341,7 +337,6 @@
         if (target.classList.contains("merit-input")) {
           const memberId = Number(target.dataset.memberId);
           let merit = parseInt(target.value) || 0;
-          merit = Math.max(0, Math.min(100, merit));
           target.value = merit;
 
           members = members.map((member) =>
