@@ -215,9 +215,17 @@
                   </select>
                 </td>
                 <td class="px-4 py-4 align-middle">
-                  <span class="inline-flex items-center rounded-full bg-slate-700 px-2.5 py-1 text-sm font-semibold text-slate-100">
-                    ${formatMerit(member.merit)}
-                  </span>
+                  <label class="sr-only" for="merit-${member.id}">Update merit for ${member.name}</label>
+                  <input
+                    id="merit-${member.id}"
+                    type="number"
+                    min="0"
+                    max="100"
+                    value="${member.merit}"
+                    data-member-id="${member.id}"
+                    class="merit-input rounded-lg border border-slate-600 bg-slate-900 px-3 py-2 text-sm font-semibold text-slate-100 w-20 focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/40"
+                    aria-label="Merit for ${member.name}"
+                  />
                 </td>
                 <td class="px-4 py-4 align-middle">
                   <button
@@ -277,17 +285,37 @@
 
       document.addEventListener("change", function (event) {
         const target = event.target;
-        if (!target.classList.contains("status-select")) return;
+        
+        if (target.classList.contains("status-select")) {
+          const memberId = Number(target.dataset.memberId);
+          const newStatus = target.value;
 
-        const memberId = Number(target.dataset.memberId);
-        const newStatus = target.value;
+          members = members.map((member) =>
+            member.id === memberId ? { ...member, status: newStatus } : member
+          );
 
-        members = members.map((member) =>
-          member.id === memberId ? { ...member, status: newStatus } : member
-        );
+          saveMembers();
+          renderMembers();
+        }
+      });
 
-        saveMembers();
-        renderMembers();
+      document.addEventListener("input", function (event) {
+        const target = event.target;
+        
+        if (target.classList.contains("merit-input")) {
+          const memberId = Number(target.dataset.memberId);
+          let merit = parseInt(target.value) || 0;
+          
+          // Clamp between 0 and 100
+          merit = Math.max(0, Math.min(100, merit));
+          target.value = merit;
+
+          members = members.map((member) =>
+            member.id === memberId ? { ...member, merit } : member
+          );
+
+          saveMembers();
+        }
       });
 
       document.addEventListener("click", function (event) {
