@@ -5,50 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>IWAMOTO DIRECTORY</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script type="module">
-      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-      import { getDatabase, ref, onValue, set } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
-
-      const firebaseConfig = {
-        apiKey: "AIzaSyDOwvoGbfKTCu91cik9XwtbGXd1KdeHjgQ",
-        authDomain: "iwamoto-directory.firebaseapp.com",
-        databaseURL: "https://iwamoto-directory-default-rtdb.asia-southeast1.firebasedatabase.app",
-        projectId: "iwamoto-directory",
-        storageBucket: "iwamoto-directory.firebasestorage.app",
-        messagingSenderId: "1004632684937",
-        appId: "1:1004632684937:web:645020220a12855acfc958",
-        measurementId: "G-QW5FGVC65H"
-      };
-
-      const app = initializeApp(firebaseConfig);
-      const db = getDatabase(app);
-      const membersRef = ref(db, "iwamotoDirectory/members");
-
-      window.firebaseReady = false;
-      window.firebaseMembersRef = membersRef;
-
-      window.initializeFirebaseSync = function () {
-        onValue(
-          membersRef,
-          (snapshot) => {
-            const data = snapshot.val();
-            members = Array.isArray(data) ? data : [];
-            nextId = members.length > 0 ? Math.max(...members.map((m) => m.id), 0) + 1 : 1;
-            updateMemberCount();
-            renderMembers();
-            window.firebaseReady = true;
-          },
-          () => {
-            console.warn("Firebase connection failed. Using local fallback.");
-            members = loadMembers();
-            nextId = members.length > 0 ? Math.max(...members.map((m) => m.id), 0) + 1 : 1;
-            updateMemberCount();
-            renderMembers();
-            window.firebaseReady = false;
-          }
-        );
-      };
-    </script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
     <style>
       body {
         background:
@@ -161,9 +119,26 @@
     </div>
 
     <script>
+      const firebaseConfig = {
+        apiKey: "AIzaSyDOwvoGbfKTCu91cik9XwtbGXd1KdeHjgQ",
+        authDomain: "iwamoto-directory.firebaseapp.com",
+        databaseURL: "https://iwamoto-directory-default-rtdb.asia-southeast1.firebasedatabase.app",
+        projectId: "iwamoto-directory",
+        storageBucket: "iwamoto-directory.firebasestorage.app",
+        messagingSenderId: "1004632684937",
+        appId: "1:1004632684937:web:645020220a12855acfc958",
+        measurementId: "G-QW5FGVC65H"
+      };
+
+      const app = firebase.initializeApp(firebaseConfig);
+      const db = firebase.database();
+      const membersRef = db.ref("iwamotoDirectory/members");
+
       const STORAGE_KEY = "iwamoto-directory-members";
       let members = [];
       let nextId = 1;
+      window.firebaseReady = false;
+      window.firebaseMembersRef = membersRef;
 
       const tableBody = document.getElementById("memberTableBody");
       const memberCountDisplay = document.getElementById("memberCount");
@@ -193,15 +168,31 @@
 
       function saveMembersCloud() {
         if (window.firebaseReady && window.firebaseReady === true) {
-          const remoteMembersRef = window.firebaseMembersRef;
-          if (remoteMembersRef) {
-            set(remoteMembersRef, members)
-              .then(() => console.log("Firebase sync saved"))
-              .catch((error) => console.error("Firebase sync error:", error));
-          }
+          membersRef.set(members)
+            .then(() => console.log("Firebase sync saved"))
+            .catch((error) => console.error("Firebase sync error:", error));
         } else {
           saveMembersLocal();
         }
+      }
+
+      function initializeFirebaseSync() {
+        membersRef.on("value", (snapshot) => {
+          const data = snapshot.val();
+          members = Array.isArray(data) ? data : [];
+          nextId = members.length > 0 ? Math.max(...members.map((m) => m.id), 0) + 1 : 1;
+          updateMemberCount();
+          renderMembers();
+          window.firebaseReady = true;
+          console.log("Firebase sync connected");
+        }, () => {
+          console.warn("Firebase connection failed. Using local fallback.");
+          members = loadMembers();
+          nextId = members.length > 0 ? Math.max(...members.map((m) => m.id), 0) + 1 : 1;
+          updateMemberCount();
+          renderMembers();
+          window.firebaseReady = false;
+        });
       }
 
       function getStatusClasses(status) {
@@ -223,10 +214,7 @@
 
       function renderMembers() {
         const query = searchInput.value.trim().toLowerCase();
-        const filtered = members.filter((member) =>
-          member.name.toLowerCase().includes(query)
-        );
-
+        const filtered = members.filter((member) => member.name.toLowerCase().includes(query));
         const sorted = sortMembers(filtered);
 
         if (!sorted.length) {
@@ -380,7 +368,7 @@
       nextId = members.length > 0 ? Math.max(...members.map((m) => m.id), 0) + 1 : 1;
       updateMemberCount();
       renderMembers();
-      window.initializeFirebaseSync();
+      initializeFirebaseSync();
     </script>
   </body>
 </html>
