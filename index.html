@@ -25,23 +25,29 @@
       const membersRef = ref(db, "iwamotoDirectory/members");
 
       window.firebaseReady = false;
+      window.firebaseMembersRef = membersRef;
 
-      function initializeFirebaseSync() {
-        onValue(membersRef, (snapshot) => {
-          const data = snapshot.val();
-          members = Array.isArray(data) ? data : [];
-          nextId = members.length > 0 ? Math.max(...members.map((m) => m.id), 0) + 1 : 1;
-          updateMemberCount();
-          renderMembers();
-          window.firebaseReady = true;
-        }, () => {
-          console.warn("Firebase connection failed. Using local fallback.");
-          members = loadMembers();
-          nextId = members.length > 0 ? Math.max(...members.map((m) => m.id), 0) + 1 : 1;
-          updateMemberCount();
-          renderMembers();
-        });
-      }
+      window.initializeFirebaseSync = function () {
+        onValue(
+          membersRef,
+          (snapshot) => {
+            const data = snapshot.val();
+            members = Array.isArray(data) ? data : [];
+            nextId = members.length > 0 ? Math.max(...members.map((m) => m.id), 0) + 1 : 1;
+            updateMemberCount();
+            renderMembers();
+            window.firebaseReady = true;
+          },
+          () => {
+            console.warn("Firebase connection failed. Using local fallback.");
+            members = loadMembers();
+            nextId = members.length > 0 ? Math.max(...members.map((m) => m.id), 0) + 1 : 1;
+            updateMemberCount();
+            renderMembers();
+            window.firebaseReady = false;
+          }
+        );
+      };
     </script>
     <style>
       body {
@@ -374,7 +380,7 @@
       nextId = members.length > 0 ? Math.max(...members.map((m) => m.id), 0) + 1 : 1;
       updateMemberCount();
       renderMembers();
-      initializeFirebaseSync();
+      window.initializeFirebaseSync();
     </script>
   </body>
 </html>
