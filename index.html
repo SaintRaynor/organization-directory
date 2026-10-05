@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>IWAMOTO DIRECTORY</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      body {
+        background:
+          radial-gradient(circle at top, rgba(99, 102, 241, 0.12), transparent 35%),
+          linear-gradient(to bottom, #020617, #0f172a 45%, #111827);
+      }
+    </style>
+  </head>
+  <body class="min-h-screen text-slate-100 antialiased">
+    <div class="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:px-8">
+      <div class="overflow-hidden rounded-2xl border border-slate-700/80 bg-slate-900/80 shadow-2xl shadow-indigo-950/30 backdrop-blur">
+        <header class="border-b border-slate-700 bg-slate-900/90 px-5 py-6 sm:px-8">
+          <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+            <div>
+              <p class="text-xs font-semibold uppercase tracking-[0.25em] text-indigo-300">Operations</p>
+              <h1 class="mt-2 text-2xl font-bold tracking-tight text-white sm:text-3xl">IWAMOTO DIRECTORY</h1>
+            </div>
+
+            <div class="w-full max-w-md">
+              <label for="searchInput" class="sr-only">Search by name</label>
+              <div class="relative">
+                <input
+                  id="searchInput"
+                  type="text"
+                  placeholder="Search members by name..."
+                  class="w-full rounded-xl border border-slate-600 bg-slate-800/80 py-3 pl-11 pr-4 text-sm text-white placeholder:text-slate-400 focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/40"
+                />
+                <svg
+                  class="pointer-events-none absolute left-3 top-3.5 h-5 w-5 text-slate-400"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                >
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35m1.85-5.15a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <main class="p-4 sm:p-6">
+          <div class="overflow-x-auto">
+            <table class="min-w-full border-separate border-spacing-y-2">
+              <thead>
+                <tr class="text-left text-xs uppercase tracking-[0.2em] text-slate-400">
+                  <th class="px-4 py-3 font-medium">Name</th>
+                  <th class="px-4 py-3 font-medium">Rank</th>
+                  <th class="px-4 py-3 font-medium">Status</th>
+                  <th class="px-4 py-3 font-medium">Merit</th>
+                </tr>
+              </thead>
+              <tbody id="memberTableBody"></tbody>
+            </table>
+          </div>
+        </main>
+      </div>
+    </div>
+
+    <script>
+      const STORAGE_KEY = "organization-directory-members";
+
+      const defaultMembers = [
+        { id: 1, name: "Alicia Hayes", rank: "Commander", rankOrder: 5, status: "Active", merit: 98 },
+        { id: 2, name: "Marcus Chen", rank: "Captain", rankOrder: 4, status: "Active", merit: 93 },
+        { id: 3, name: "Priya Nair", rank: "Captain", rankOrder: 4, status: "Inactive", merit: 89 },
+        { id: 4, name: "Daniel Brooks", rank: "Lieutenant", rankOrder: 3, status: "Active", merit: 87 },
+        { id: 5, name: "Sofia Ramirez", rank: "Lieutenant", rankOrder: 3, status: "Inactive", merit: 84 },
+        { id: 6, name: "Emmanuel Ford", rank: "Sergeant", rankOrder: 2, status: "Active", merit: 80 },
+        { id: 7, name: "Nina Patel", rank: "Sergeant", rankOrder: 2, status: "Inactive", merit: 76 },
+        { id: 8, name: "Oliver Grant", rank: "Specialist", rankOrder: 1, status: "Active", merit: 72 }
+      ];
+
+      let members = loadMembers();
+
+      const tableBody = document.getElementById("memberTableBody");
+      const searchInput = document.getElementById("searchInput");
+
+      function loadMembers() {
+        try {
+          const saved = localStorage.getItem(STORAGE_KEY);
+          if (!saved) return [...defaultMembers];
+          const parsed = JSON.parse(saved);
+          if (Array.isArray(parsed) && parsed.length) return parsed;
+        } catch (error) {
+          console.warn("Unable to load saved members:", error);
+        }
+        return [...defaultMembers];
+      }
+
+      function saveMembers() {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(members));
+      }
+
+      function getStatusClasses(status) {
+        return status === "Active"
+          ? "bg-emerald-500/15 text-emerald-300 ring-1 ring-emerald-500/30"
+          : "bg-rose-500/15 text-rose-300 ring-1 ring-rose-500/30";
+      }
+
+      function formatMerit(value) {
+        return typeof value === "number" ? `${value}` : value;
+      }
+
+      function sortMembers(list) {
+        return [...list].sort((a, b) => {
+          if (b.rankOrder !== a.rankOrder) return b.rankOrder - a.rankOrder;
+          return a.name.localeCompare(b.name);
+        });
+      }
+
+      function renderMembers() {
+        const query = searchInput.value.trim().toLowerCase();
+        const filtered = members.filter((member) =>
+          member.name.toLowerCase().includes(query)
+        );
+
+        const sorted = sortMembers(filtered);
+
+        if (!sorted.length) {
+          tableBody.innerHTML = `
+            <tr>
+              <td colspan="4" class="px-4 py-10 text-center text-sm text-slate-400">
+                No members match your search.
+              </td>
+            </tr>
+          `;
+          return;
+        }
+
+        tableBody.innerHTML = sorted
+          .map((member) => {
+            return `
+              <tr class="rounded-xl bg-slate-800/70 text-slate-100 shadow-sm ring-1 ring-slate-700/80">
+                <td class="px-4 py-4 align-middle">
+                  <div class="font-semibold text-white">${member.name}</div>
+                </td>
+                <td class="px-4 py-4 align-middle">
+                  <span class="inline-flex rounded-full border border-indigo-500/30 bg-indigo-500/10 px-2.5 py-1 text-xs font-medium text-indigo-200">
+                    ${member.rank}
+                  </span>
+                </td>
+                <td class="px-4 py-4 align-middle">
+                  <label class="sr-only" for="status-${member.id}">Update status for ${member.name}</label>
+                  <select
+                    id="status-${member.id}"
+                    data-member-id="${member.id}"
+                    class="status-select rounded-lg border border-slate-600 bg-slate-900 px-3 py-2 text-sm font-medium focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/40 ${getStatusClasses(member.status)}"
+                    aria-label="Status for ${member.name}"
+                  >
+                    <option value="Active" ${member.status === "Active" ? "selected" : ""}>Active</option>
+                    <option value="Inactive" ${member.status === "Inactive" ? "selected" : ""}>Inactive</option>
+                  </select>
+                </td>
+                <td class="px-4 py-4 align-middle">
+                  <span class="inline-flex items-center rounded-full bg-slate-700 px-2.5 py-1 text-sm font-semibold text-slate-100">
+                    ${formatMerit(member.merit)}
+                  </span>
+                </td>
+              </tr>
+            `;
+          })
+          .join("");
+      }
+
+      searchInput.addEventListener("input", renderMembers);
+
+      document.addEventListener("change", function (event) {
+        const target = event.target;
+        if (!target.classList.contains("status-select")) return;
+
+        const memberId = Number(target.dataset.memberId);
+        const newStatus = target.value;
+
+        members = members.map((member) =>
+          member.id === memberId ? { ...member, status: newStatus } : member
+        );
+
+        saveMembers();
+        renderMembers();
+      });
+
+      renderMembers();
+    </script>
+  </body>
+</html>
