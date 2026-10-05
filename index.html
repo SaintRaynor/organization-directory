@@ -5,6 +5,43 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>IWAMOTO DIRECTORY</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script type="module">
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+      import { getDatabase, ref, onValue, set } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+      const firebaseConfig = {
+        apiKey: "YOUR_API_KEY",
+        authDomain: "YOUR_PROJECT.firebaseapp.com",
+        databaseURL: "https://YOUR_PROJECT-default-rtdb.firebaseio.com",
+        projectId: "YOUR_PROJECT",
+        storageBucket: "YOUR_PROJECT.appspot.com",
+        messagingSenderId: "000000000000",
+        appId: "YOUR_APP_ID"
+      };
+
+      const app = initializeApp(firebaseConfig);
+      const db = getDatabase(app);
+      const membersRef = ref(db, "iwamotoDirectory/members");
+
+      window.firebaseReady = false;
+
+      function initializeFirebaseSync() {
+        onValue(membersRef, (snapshot) => {
+          const data = snapshot.val();
+          members = Array.isArray(data) ? data : [];
+          nextId = members.length > 0 ? Math.max(...members.map((m) => m.id), 0) + 1 : 1;
+          updateMemberCount();
+          renderMembers();
+          window.firebaseReady = true;
+        }, () => {
+          console.warn("Firebase connection failed. Using local fallback.");
+          members = loadMembers();
+          nextId = members.length > 0 ? Math.max(...members.map((m) => m.id), 0) + 1 : 1;
+          updateMemberCount();
+          renderMembers();
+        });
+      }
+    </script>
     <style>
       body {
         background:
@@ -49,7 +86,6 @@
         </header>
 
         <main class="p-4 sm:p-6">
-          <!-- Add Member Section -->
           <div class="mb-8 rounded-xl border border-slate-700 bg-slate-800/50 p-6">
             <h2 class="mb-4 text-lg font-semibold text-white">Add New Member</h2>
             <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-5">
@@ -99,7 +135,6 @@
             </button>
           </div>
 
-          <!-- Members Table -->
           <div class="overflow-x-auto">
             <table class="min-w-full border-separate border-spacing-y-2">
               <thead>
@@ -120,9 +155,8 @@
 
     <script>
       const STORAGE_KEY = "iwamoto-directory-members";
-
-      let members = loadMembers();
-      let nextId = members.length > 0 ? Math.max(...members.map(m => m.id), 0) + 1 : 1;
+      let members = [];
+      let nextId = 1;
 
       const tableBody = document.getElementById("memberTableBody");
       const memberCountDisplay = document.getElementById("memberCount");
@@ -146,18 +180,27 @@
         return [];
       }
 
-      function saveMembers() {
+      function saveMembersLocal() {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(members));
+      }
+
+      function saveMembersCloud() {
+        if (window.firebaseReady && window.firebaseReady === true) {
+          const remoteMembersRef = window.firebaseMembersRef;
+          if (remoteMembersRef) {
+            set(remoteMembersRef, members)
+              .then(() => console.log("Firebase sync saved"))
+              .catch((error) => console.error("Firebase sync error:", error));
+          }
+        } else {
+          saveMembersLocal();
+        }
       }
 
       function getStatusClasses(status) {
         return status === "Active"
           ? "bg-emerald-500/15 text-emerald-300 ring-1 ring-emerald-500/30"
           : "bg-rose-500/15 text-rose-300 ring-1 ring-rose-500/30";
-      }
-
-      function formatMerit(value) {
-        return typeof value === "number" ? `${value}` : value;
       }
 
       function sortMembers(list) {
@@ -262,11 +305,10 @@
           merit: Math.max(0, Math.min(100, merit))
         });
 
-        saveMembers();
+        saveMembersCloud();
         updateMemberCount();
         renderMembers();
 
-        // Clear inputs
         newNameInput.value = "";
         newRankInput.value = "";
         newRankOrderInput.value = "1";
@@ -278,14 +320,13 @@
       searchInput.addEventListener("input", renderMembers);
       addMemberBtn.addEventListener("click", addMember);
 
-      // Enter key to add member
       newMeritInput.addEventListener("keypress", (e) => {
         if (e.key === "Enter") addMember();
       });
 
       document.addEventListener("change", function (event) {
         const target = event.target;
-        
+
         if (target.classList.contains("status-select")) {
           const memberId = Number(target.dataset.memberId);
           const newStatus = target.value;
@@ -294,19 +335,17 @@
             member.id === memberId ? { ...member, status: newStatus } : member
           );
 
-          saveMembers();
+          saveMembersCloud();
           renderMembers();
         }
       });
 
       document.addEventListener("input", function (event) {
         const target = event.target;
-        
+
         if (target.classList.contains("merit-input")) {
           const memberId = Number(target.dataset.memberId);
           let merit = parseInt(target.value) || 0;
-          
-          // Clamp between 0 and 100
           merit = Math.max(0, Math.min(100, merit));
           target.value = merit;
 
@@ -314,7 +353,7 @@
             member.id === memberId ? { ...member, merit } : member
           );
 
-          saveMembers();
+          saveMembersCloud();
         }
       });
 
@@ -324,14 +363,17 @@
         const memberId = Number(event.target.dataset.memberId);
         if (confirm("Are you sure you want to delete this member?")) {
           members = members.filter((member) => member.id !== memberId);
-          saveMembers();
+          saveMembersCloud();
           updateMemberCount();
           renderMembers();
         }
       });
 
+      members = loadMembers();
+      nextId = members.length > 0 ? Math.max(...members.map((m) => m.id), 0) + 1 : 1;
       updateMemberCount();
       renderMembers();
+      initializeFirebaseSync();
     </script>
   </body>
 </html>
