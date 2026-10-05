@@ -18,9 +18,9 @@
         position: relative;
         width: 100%;
         overflow: hidden;
-        background: linear-gradient(to bottom, #1a1a2e 0%, #16213e 50%, #0f1923 100%);
-        border-bottom: 3px solid #d4af37;
-        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.8), inset 0 1px 0 rgba(212, 175, 55, 0.3);
+        background: linear-gradient(to bottom, #1c2028 0%, #10151b 40%, #111823 100%);
+        border-bottom: 3px solid rgba(212, 175, 55, 0.95);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.8), inset 0 1px 0 rgba(212, 175, 55, 0.2);
       }
 
       .banner-sheen {
@@ -30,8 +30,8 @@
         top: 50%;
         height: 2px;
         transform: translateY(-50%);
-        background: linear-gradient(90deg, transparent, #d4af37, transparent);
-        box-shadow: 0 0 30px rgba(212, 175, 55, 0.5);
+        background: linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.8), transparent);
+        box-shadow: 0 0 20px rgba(212, 175, 55, 0.4);
       }
 
       .banner-content {
@@ -49,13 +49,12 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        perspective: 1000px;
       }
 
       .banner-emblem svg {
-        width: 120px;
-        height: 120px;
-        filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.7));
+        width: 140px;
+        height: 140px;
+        filter: drop-shadow(0 8px 18px rgba(0, 0, 0, 0.75));
       }
 
       .banner-title {
@@ -63,13 +62,13 @@
         text-align: center;
         font-family: Georgia, "Times New Roman", serif;
         font-weight: 900;
-        font-size: 4.5rem;
+        font-size: clamp(2.8rem, 5vw, 6rem);
         line-height: 1;
-        letter-spacing: 0.08em;
+        letter-spacing: 0.09em;
         color: #d4af37;
-        text-shadow: 
+        text-shadow:
           0 3px 0 rgba(158, 116, 20, 0.9),
-          0 10px 20px rgba(0, 0, 0, 0.8),
+          0 8px 18px rgba(0, 0, 0, 0.8),
           -2px 0 0 rgba(94, 70, 19, 0.6),
           2px 0 0 rgba(94, 70, 19, 0.6);
       }
@@ -81,18 +80,18 @@
       @media (max-width: 768px) {
         .banner-content {
           grid-template-columns: 1fr;
-          gap: 1rem;
+          gap: 0.75rem;
           min-height: 220px;
-          padding: 1.5rem 1rem;
+          padding: 1.4rem 1rem;
         }
 
         .banner-title {
-          font-size: 2.8rem;
+          font-size: clamp(2.1rem, 11vw, 4rem);
         }
 
         .banner-emblem svg {
-          width: 80px;
-          height: 80px;
+          width: 100px;
+          height: 100px;
         }
       }
 
@@ -111,78 +110,103 @@
     </style>
   </head>
   <body class="min-h-screen text-slate-100 antialiased">
-    <!-- Organization Banner -->
     <div class="org-banner">
       <div class="banner-sheen"></div>
       <div class="banner-content">
-        <!-- Left Emblem -->
-        <div class="banner-emblem left">
-          <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+        <div class="banner-emblem left" aria-hidden="true">
+          <svg viewBox="0 0 220 220" xmlns="http://www.w3.org/2000/svg">
             <defs>
-              <linearGradient id="silverL" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" style="stop-color:#e8e8e8;stop-opacity:1" />
-                <stop offset="50%" style="stop-color:#b8b8b8;stop-opacity:1" />
-                <stop offset="100%" style="stop-color:#888888;stop-opacity:1" />
+              <linearGradient id="crestGold" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stop-color="#f5d98f"/>
+                <stop offset="20%" stop-color="#d4af37"/>
+                <stop offset="50%" stop-color="#b68b2e"/>
+                <stop offset="100%" stop-color="#f0d990"/>
               </linearGradient>
-              <filter id="shadow">
-                <feDropShadow dx="2" dy="2" stdDeviation="3" flood-opacity="0.5"/>
-              </filter>
+              <linearGradient id="crestGoldDeep" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#d8b75d"/>
+                <stop offset="100%" stop-color="#8d681c"/>
+              </linearGradient>
             </defs>
-            <!-- Outer Circle -->
-            <circle cx="100" cy="100" r="95" fill="none" stroke="url(#silverL)" stroke-width="8" opacity="0.9"/>
-            <!-- Inner Circle -->
-            <circle cx="100" cy="100" r="75" fill="none" stroke="url(#silverL)" stroke-width="5" opacity="0.8"/>
-            <!-- Center Flower Pattern -->
-            <g transform="translate(100, 100)">
-              <!-- Petals -->
-              <path d="M 0,-35 Q -12,-50 0,-60 Q 12,-50 0,-35" fill="url(#silverL)" opacity="0.85"/>
-              <path d="M 35,0 Q 50,-12 60,0 Q 50,12 35,0" fill="url(#silverL)" opacity="0.85"/>
-              <path d="M 0,35 Q -12,50 0,60 Q 12,50 0,35" fill="url(#silverL)" opacity="0.85"/>
-              <path d="M -35,0 Q -50,-12 -60,0 Q -50,12 -35,0" fill="url(#silverL)" opacity="0.85"/>
-              <!-- Diagonal Petals -->
-              <path d="M 25,-25 Q 10,-40 20,-55 Q 35,-40 25,-25" fill="url(#silverL)" opacity="0.7"/>
-              <path d="M 25,25 Q 35,40 20,55 Q 10,40 25,25" fill="url(#silverL)" opacity="0.7"/>
-              <path d="M -25,25 Q -40,35 -55,20 Q -40,10 -25,25" fill="url(#silverL)" opacity="0.7"/>
-              <path d="M -25,-25 Q -40,-10 -55,-20 Q -40,-35 -25,-25" fill="url(#silverL)" opacity="0.7"/>
-              <!-- Center Circle -->
-              <circle cx="0" cy="0" r="15" fill="url(#silverL)" opacity="0.9"/>
-              <circle cx="0" cy="0" r="8" fill="url(#silverL)" opacity="0.7"/>
+            <g>
+              <circle cx="110" cy="110" r="90" fill="#0d1116"/>
+              <circle cx="110" cy="110" r="82" fill="none" stroke="url(#crestGold)" stroke-width="7"/>
+
+              <g fill="url(#crestGold)" stroke="#7d5b19" stroke-width="2">
+                <path d="M110 22 C122 38, 128 50, 110 62 C92 50, 98 38, 110 22 Z"/>
+                <path d="M110 158 C122 142, 128 130, 110 118 C92 130, 98 142, 110 158 Z"/>
+                <path d="M22 110 C38 98, 50 92, 62 110 C50 128, 38 122, 22 110 Z"/>
+                <path d="M158 110 C142 98, 130 92, 118 110 C130 128, 142 122, 158 110 Z"/>
+                <path d="M50 50 C60 66, 70 70, 82 62 C72 48, 62 40, 50 50 Z"/>
+                <path d="M170 50 C160 66, 150 70, 138 62 C148 48, 158 40, 170 50 Z"/>
+                <path d="M50 170 C60 154, 70 150, 82 158 C72 172, 62 180, 50 170 Z"/>
+                <path d="M170 170 C160 154, 150 150, 138 158 C148 172, 158 180, 170 170 Z"/>
+              </g>
+
+              <g fill="none" stroke="url(#crestGoldDeep)" stroke-width="5" opacity="0.9">
+                <path d="M110 38 L110 180"/>
+                <path d="M38 110 L182 110"/>
+                <path d="M58 58 L162 162"/>
+                <path d="M162 58 L58 162"/>
+              </g>
+
+              <g fill="url(#crestGold)" stroke="#7d5b19" stroke-width="2">
+                <path d="M110 68 C132 68, 144 80, 144 98 C144 120, 126 136, 110 146 C94 136, 76 120, 76 98 C76 80, 88 68, 110 68 Z"/>
+                <path d="M110 84 C120 84, 128 89, 128 101 C128 116, 118 128, 110 134 C102 128, 92 116, 92 101 C92 89, 100 84, 110 84 Z"/>
+              </g>
+
+              <g fill="none" stroke="url(#crestGoldDeep)" stroke-width="4" opacity="0.9">
+                <path d="M110 52 C92 68, 82 82, 82 104 C82 130, 98 146, 110 154 C122 146, 138 130, 138 104 C138 82, 128 68, 110 52 Z"/>
+              </g>
             </g>
           </svg>
         </div>
 
-        <!-- Center Title -->
         <div class="banner-title">岩本一家</div>
 
-        <!-- Right Emblem (mirrored) -->
-        <div class="banner-emblem right">
-          <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+        <div class="banner-emblem right" aria-hidden="true">
+          <svg viewBox="0 0 220 220" xmlns="http://www.w3.org/2000/svg">
             <defs>
-              <linearGradient id="silverR" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" style="stop-color:#e8e8e8;stop-opacity:1" />
-                <stop offset="50%" style="stop-color:#b8b8b8;stop-opacity:1" />
-                <stop offset="100%" style="stop-color:#888888;stop-opacity:1" />
+              <linearGradient id="crestGold2" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stop-color="#f5d98f"/>
+                <stop offset="20%" stop-color="#d4af37"/>
+                <stop offset="50%" stop-color="#b68b2e"/>
+                <stop offset="100%" stop-color="#f0d990"/>
+              </linearGradient>
+              <linearGradient id="crestGoldDeep2" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#d8b75d"/>
+                <stop offset="100%" stop-color="#8d681c"/>
               </linearGradient>
             </defs>
-            <!-- Outer Circle -->
-            <circle cx="100" cy="100" r="95" fill="none" stroke="url(#silverR)" stroke-width="8" opacity="0.9"/>
-            <!-- Inner Circle -->
-            <circle cx="100" cy="100" r="75" fill="none" stroke="url(#silverR)" stroke-width="5" opacity="0.8"/>
-            <!-- Center Flower Pattern -->
-            <g transform="translate(100, 100)">
-              <!-- Petals -->
-              <path d="M 0,-35 Q -12,-50 0,-60 Q 12,-50 0,-35" fill="url(#silverR)" opacity="0.85"/>
-              <path d="M 35,0 Q 50,-12 60,0 Q 50,12 35,0" fill="url(#silverR)" opacity="0.85"/>
-              <path d="M 0,35 Q -12,50 0,60 Q 12,50 0,35" fill="url(#silverR)" opacity="0.85"/>
-              <path d="M -35,0 Q -50,-12 -60,0 Q -50,12 -35,0" fill="url(#silverR)" opacity="0.85"/>
-              <!-- Diagonal Petals -->
-              <path d="M 25,-25 Q 10,-40 20,-55 Q 35,-40 25,-25" fill="url(#silverR)" opacity="0.7"/>
-              <path d="M 25,25 Q 35,40 20,55 Q 10,40 25,25" fill="url(#silverR)" opacity="0.7"/>
-              <path d="M -25,25 Q -40,35 -55,20 Q -40,10 -25,25" fill="url(#silverR)" opacity="0.7"/>
-              <path d="M -25,-25 Q -40,-10 -55,-20 Q -40,-35 -25,-25" fill="url(#silverR)" opacity="0.7"/>
-              <!-- Center Circle -->
-              <circle cx="0" cy="0" r="15" fill="url(#silverR)" opacity="0.9"/>
-              <circle cx="0" cy="0" r="8" fill="url(#silverR)" opacity="0.7"/>
+            <g>
+              <circle cx="110" cy="110" r="90" fill="#0d1116"/>
+              <circle cx="110" cy="110" r="82" fill="none" stroke="url(#crestGold2)" stroke-width="7"/>
+
+              <g fill="url(#crestGold2)" stroke="#7d5b19" stroke-width="2">
+                <path d="M110 22 C122 38, 128 50, 110 62 C92 50, 98 38, 110 22 Z"/>
+                <path d="M110 158 C122 142, 128 130, 110 118 C92 130, 98 142, 110 158 Z"/>
+                <path d="M22 110 C38 98, 50 92, 62 110 C50 128, 38 122, 22 110 Z"/>
+                <path d="M158 110 C142 98, 130 92, 118 110 C130 128, 142 122, 158 110 Z"/>
+                <path d="M50 50 C60 66, 70 70, 82 62 C72 48, 62 40, 50 50 Z"/>
+                <path d="M170 50 C160 66, 150 70, 138 62 C148 48, 158 40, 170 50 Z"/>
+                <path d="M50 170 C60 154, 70 150, 82 158 C72 172, 62 180, 50 170 Z"/>
+                <path d="M170 170 C160 154, 150 150, 138 158 C148 172, 158 180, 170 170 Z"/>
+              </g>
+
+              <g fill="none" stroke="url(#crestGoldDeep2)" stroke-width="5" opacity="0.9">
+                <path d="M110 38 L110 180"/>
+                <path d="M38 110 L182 110"/>
+                <path d="M58 58 L162 162"/>
+                <path d="M162 58 L58 162"/>
+              </g>
+
+              <g fill="url(#crestGold2)" stroke="#7d5b19" stroke-width="2">
+                <path d="M110 68 C132 68, 144 80, 144 98 C144 120, 126 136, 110 146 C94 136, 76 120, 76 98 C76 80, 88 68, 110 68 Z"/>
+                <path d="M110 84 C120 84, 128 89, 128 101 C128 116, 118 128, 110 134 C102 128, 92 116, 92 101 C92 89, 100 84, 110 84 Z"/>
+              </g>
+
+              <g fill="none" stroke="url(#crestGoldDeep2)" stroke-width="4" opacity="0.9">
+                <path d="M110 52 C92 68, 82 82, 82 104 C82 130, 98 146, 110 154 C122 146, 138 130, 138 104 C138 82, 128 68, 110 52 Z"/>
+              </g>
             </g>
           </svg>
         </div>
