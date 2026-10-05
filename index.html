@@ -16,24 +16,12 @@
 
       .org-banner {
         position: relative;
+        width: 100%;
         overflow: hidden;
-        border: 3px solid rgba(212, 175, 55, 0.9);
-        border-left: none;
-        border-right: none;
-        background:
-          linear-gradient(135deg, rgba(10, 14, 20, 0.95), rgba(28, 32, 38, 0.95)),
-          #0b0f15;
-        box-shadow: inset 0 0 0 1px rgba(212, 175, 55, 0.55);
-      }
-
-      .org-banner::before {
-        content: "";
-        position: absolute;
-        inset: 0;
-        background:
-          linear-gradient(135deg, transparent 0%, rgba(212, 175, 55, 0.07) 48%, transparent 100%),
-          linear-gradient(45deg, transparent 0%, rgba(212, 175, 55, 0.1) 50%, transparent 100%);
-        pointer-events: none;
+        background: linear-gradient(135deg, rgba(20, 24, 32, 0.98), rgba(15, 17, 23, 0.98)), 
+                    radial-gradient(circle at center, rgba(99, 102, 241, 0.05), transparent);
+        border-bottom: 2px solid rgba(212, 175, 55, 0.4);
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(212, 175, 55, 0.2);
       }
 
       .banner-sheen {
@@ -41,55 +29,41 @@
         left: 0;
         right: 0;
         top: 50%;
-        height: 18px;
+        height: 1px;
         transform: translateY(-50%);
-        background: linear-gradient(90deg, rgba(212, 175, 55, 0.18), rgba(212, 175, 55, 0.92), rgba(212, 175, 55, 0.18));
-        box-shadow: 0 0 20px rgba(212, 175, 55, 0.38);
+        background: linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.6), transparent);
+        box-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
       }
 
       .banner-content {
         position: relative;
-        display: grid;
-        grid-template-columns: 1fr auto 1fr;
-        align-items: center;
-        gap: 1rem;
-        min-height: 260px;
-        padding: 1rem 1.25rem;
-      }
-
-      .banner-emblem {
         display: flex;
         align-items: center;
         justify-content: center;
-        min-height: 170px;
-        filter: drop-shadow(0 8px 12px rgba(0, 0, 0, 0.5));
+        min-height: 280px;
+        padding: 2rem 1rem;
+        z-index: 1;
       }
 
-      .banner-title {
-        position: relative;
-        text-align: center;
-        font-family: "Georgia", "Times New Roman", serif;
-        font-weight: 700;
-        letter-spacing: 0.04em;
-        font-size: clamp(3.2rem, 7vw, 8rem);
-        line-height: 0.9;
-        color: rgba(212, 175, 55, 0.96);
-        text-shadow:
-          0 2px 0 rgba(158, 116, 20, 0.8),
-          0 8px 18px rgba(0, 0, 0, 0.7),
-          -2px 0 0 rgba(94, 70, 19, 0.7),
-          2px 0 0 rgba(94, 70, 19, 0.7),
-          0 -2px 0 rgba(94, 70, 19, 0.7);
-        white-space: nowrap;
+      .banner-image {
+        max-width: 100%;
+        height: auto;
+        max-height: 280px;
+        object-fit: contain;
+        filter: drop-shadow(0 10px 25px rgba(0, 0, 0, 0.7)) 
+                brightness(1.05) 
+                contrast(1.08);
       }
 
-      .banner-emblem svg {
-        width: min(25vw, 260px);
-        height: min(25vw, 260px);
-      }
+      @media (max-width: 768px) {
+        .banner-content {
+          min-height: 200px;
+          padding: 1.5rem 0.5rem;
+        }
 
-      .banner-emblem.right svg {
-        transform: scaleX(-1);
+        .banner-image {
+          max-height: 200px;
+        }
       }
 
       .draggable-row {
@@ -104,79 +78,18 @@
       .drag-over {
         border-top: 2px solid rgb(99, 102, 241) !important;
       }
-
-      @media (max-width: 768px) {
-        .banner-content {
-          grid-template-columns: 1fr;
-          min-height: 200px;
-          gap: 0.25rem;
-          padding: 1rem 0.5rem;
-        }
-
-        .banner-emblem {
-          min-height: 90px;
-        }
-
-        .banner-emblem svg {
-          width: 120px;
-          height: 120px;
-        }
-
-        .banner-title {
-          font-size: clamp(2.2rem, 11vw, 4.5rem);
-          white-space: normal;
-          line-height: 0.95;
-        }
-      }
     </style>
   </head>
   <body class="min-h-screen text-slate-100 antialiased">
+    <!-- Organization Banner -->
     <div class="org-banner">
       <div class="banner-sheen"></div>
       <div class="banner-content">
-        <div class="banner-emblem left" aria-hidden="true">
-          <svg viewBox="0 0 220 220" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-              <linearGradient id="silverGrad" x1="0" x2="1">
-                <stop offset="0%" stop-color="#f5f5f5" />
-                <stop offset="40%" stop-color="#c8c8c8" />
-                <stop offset="100%" stop-color="#a7a7a7" />
-              </linearGradient>
-            </defs>
-            <g transform="translate(10,10)">
-              <path d="M100 15 L120 100 L100 185 L80 100 Z" fill="url(#silverGrad)" opacity="0.95"/>
-              <path d="M15 100 L100 120 L185 100 L100 80 Z" fill="url(#silverGrad)" opacity="0.92"/>
-              <circle cx="100" cy="100" r="38" fill="url(#silverGrad)" opacity="0.8"/>
-              <circle cx="100" cy="100" r="52" fill="none" stroke="url(#silverGrad)" stroke-width="10" opacity="0.9"/>
-              <path d="M100 22 L110 52 L140 62 L110 72 L100 102 L90 72 L60 62 L90 52 Z" fill="url(#silverGrad)" opacity="0.9"/>
-              <path d="M22 100 L52 110 L62 140 L72 110 L102 100 L72 90 L62 60 L52 90 Z" fill="url(#silverGrad)" opacity="0.75"/>
-              <path d="M178 100 L148 110 L138 140 L128 110 L94 100 L128 90 L138 60 L148 90 Z" fill="url(#silverGrad)" opacity="0.75"/>
-            </g>
-          </svg>
-        </div>
-
-        <div class="banner-title">岩本一家</div>
-
-        <div class="banner-emblem right" aria-hidden="true">
-          <svg viewBox="0 0 220 220" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-              <linearGradient id="silverGrad2" x1="0" x2="1">
-                <stop offset="0%" stop-color="#f5f5f5" />
-                <stop offset="40%" stop-color="#c8c8c8" />
-                <stop offset="100%" stop-color="#a7a7a7" />
-              </linearGradient>
-            </defs>
-            <g transform="translate(10,10)">
-              <path d="M100 15 L120 100 L100 185 L80 100 Z" fill="url(#silverGrad2)" opacity="0.95"/>
-              <path d="M15 100 L100 120 L185 100 L100 80 Z" fill="url(#silverGrad2)" opacity="0.92"/>
-              <circle cx="100" cy="100" r="38" fill="url(#silverGrad2)" opacity="0.8"/>
-              <circle cx="100" cy="100" r="52" fill="none" stroke="url(#silverGrad2)" stroke-width="10" opacity="0.9"/>
-              <path d="M100 22 L110 52 L140 62 L110 72 L100 102 L90 72 L60 62 L90 52 Z" fill="url(#silverGrad2)" opacity="0.9"/>
-              <path d="M22 100 L52 110 L62 140 L72 110 L102 100 L72 90 L62 60 L52 90 Z" fill="url(#silverGrad2)" opacity="0.75"/>
-              <path d="M178 100 L148 110 L138 140 L128 110 L94 100 L128 90 L138 60 L148 90 Z" fill="url(#silverGrad2)" opacity="0.75"/>
-            </g>
-          </svg>
-        </div>
+        <img 
+          src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 280'%3E%3Cdefs%3E%3ClinearGradient id='bgGrad' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' style='stop-color:%231a1e28;stop-opacity:1' /%3E%3Cstop offset='50%25' style='stop-color:%230f1117;stop-opacity:1' /%3E%3Cstop offset='100%25' style='stop-color:%23141820;stop-opacity:1' /%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='1440' height='280' fill='url(%23bgGrad)'/%3E%3C!-- Gold Top Border --%3E%3Crect x='0' y='0' width='1440' height='2' fill='%23d4af37' opacity='0.6'/%3E%3C!-- Gold Vertical Stripes --%3E%3Crect x='100' y='40' width='120' height='200' fill='%23d4af37' opacity='0.15'/%3E%3Crect x='1220' y='40' width='120' height='200' fill='%23d4af37' opacity='0.15'/%3E%3C!-- Center Gold Band --%3E%3Crect x='0' y='120' width='1440' height='40' fill='%23d4af37' opacity='0.08'/%3E%3C!-- Left Emblem --  %3E%3Cg transform='translate(140, 140)'%3E%3Ccircle cx='0' cy='0' r='45' fill='none' stroke='%23c0c0c0' stroke-width='3' opacity='0.8'/%3E%3Cpath d='M -30 0 L 30 0 M 0 -30 L 0 30' stroke='%23c0c0c0' stroke-width='2' opacity='0.7'/%3E%3Cpath d='M -21 -21 L 21 21 M -21 21 L 21 -21' stroke='%23c0c0c0' stroke-width='2' opacity='0.6'/%3E%3C/g%3E%3C!-- Center Text (Japanese) --%3E%3Ctext x='720' y='170' font-family='serif' font-size='80' font-weight='bold' text-anchor='middle' fill='%23d4af37' opacity='0.9' text-shadow='0 4px 8px rgba(0,0,0,0.8)'%3E岩本一家%3C/text%3E%3C!-- Right Emblem --%3E%3Cg transform='translate(1300, 140)'%3E%3Ccircle cx='0' cy='0' r='45' fill='none' stroke='%23c0c0c0' stroke-width='3' opacity='0.8'/%3E%3Cpath d='M -30 0 L 30 0 M 0 -30 L 0 30' stroke='%23c0c0c0' stroke-width='2' opacity='0.7'/%3E%3Cpath d='M -21 -21 L 21 21 M -21 21 L 21 -21' stroke='%23c0c0c0' stroke-width='2' opacity='0.6'/%3E%3C/g%3E%3C!-- Gold Bottom Border --%3E%3Crect x='0' y='278' width='1440' height='2' fill='%23d4af37' opacity='0.6'/%3E%3C/svg%3E" 
+          alt="Iwamoto Organization Banner"
+          class="banner-image"
+        />
       </div>
     </div>
 
